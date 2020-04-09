@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covid19Estimator</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body>
+    <div class='header'>
+        <h1>Covid19-Estimator</h1> 
+     </div>
+    <div class="container">
+        <form>
+            <div>
+                <label for="population">Population:</label>
+                <input required type="number"  id='population' data-population="population" placeholder='Population'>
+            </div>
+            <div>
+                <label for="time">Time to Elapse:</label>
+                <input reqquired type="number" id='time' data-time-to-elapse="time" placeholder='Time to Elaspe'>
+            </div>
+            <div>
+                <label for="reported-cases">Reported Cases:</label>
+                <input required type="number" id='reported-cases' data-reported-cases="reported-cases" placeholder='Reported Cases'>
+            </div>
+            <div>
+                <label for="total-hospital-bed">Total Hospital Bed:</label>
+                <input required type="number" id='total-hospital-bed' data-total-hospital-beds="total-hospital-bed" placeholder='Total Hospital Bed'>
+            </div>
+            <div>
+                <label for="period-type">Period Type:</label>
+                <select required data-period-type="period-type" id='period-type'>
+                    <option selected value='days'>Days</option>
+                    <option value='weeks'>Weeks</option>
+                    <option value='months'>Months</option>
+                </select>
+            </div>
+            <button onclick="fetchData()" type='button' id='estimate'>Go Estimate</button>
+
+        </form>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
