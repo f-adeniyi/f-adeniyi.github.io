@@ -1,47 +1,74 @@
 
-function fetchData(){
-    var myData = {};
-    myData.population = document.querySelector('#population').value;
-    myData.timeToElapse = document.querySelector('#time').value;
-    myData.reportedCases = document.querySelector('#reported-cases').value;
-    myData.totalHospitalBeds = document.querySelector("#total-hospital-bed").value;
-    myData.periodType = document.querySelector("#period-type").value;
-    covid19ImpactEstimator(myData);
+function fetchData() {
+  var myData = {};
+  myData.population = document.querySelector('#population').value;
+  myData.timeToElapse = document.querySelector('#time').value;
+  myData.reportedCases = document.querySelector('#reported-cases').value;
+  myData.totalHospitalBeds = document.querySelector("#total-hospital-bed").value;
+  myData.periodType = document.querySelector("#period-type").value;
+  covid19ImpactEstimator(myData);
 }
 
-function covid19ImpactEstimator(data) {
-    var factor;
-    var time = data.timeToElapse;
-    var availableBeds = (data.totalHospitalBeds * (35 / 100));
-    var impact = {
-    };
-    var severeImpact = {
-
-    };
-    if ((data.periodType) === 'days') {
-        factor = Math.floor((time / 3));
-    }
-    else if ((data.periodType) === 'weeks') {
-        factor = Math.floor(((7 * time) / 3));
-    } else  {
-        factor = Math.floor(((30 * time) / 3));
-    }
-    console.log(factor);
-    impact.currentlyInfected = ((data.reportedCases) * 10);
-    severeImpact.currentlyInfected = ((data.reportedCases) * 50);
-    impact.infectionByRequestedTime = impact.currentlyInfected * (Math.pow(2, factor));
-    severeImpact.infectionByRequestedTime = severeImpact.currentlyInfected * (Math.pow(2, factor));
-    impact.severeCasesByRequestedTime = ((15 / 100) * impact.currentlyInfected);
-    severeImpact.severeCasesByRequestedTime = ((15 / 100) * severeImpact.currentlyInfected);
-    impact.hospitalBedsByRequestedTime = Math.floor((availableBeds - (impact.severeCasesByRequestedTime)));
-    severeImpact.hospitalBedsByRequestedTime = Math.floor((availableBeds - (severeImpact.severeCasesByRequestedTime)));
-
-    var output = {
-        data,
-        impact,
-        severeImpact
-    }
-    console.log(output);
-    return output;
-
-}
+const covid19ImpactEstimator = (data) => {
+  const time = data.timeToElapse;
+  const availableBeds = (data.totalHospitalBeds * (35 / 100));
+  let factor;
+  let days;
+  const impact = {};
+  const severeImpact = {};
+  if ((data.periodType) === 'days') {
+    days = time;
+    factor = Math.trunc(((time / 3)));
+  } else if ((data.periodType) === 'weeks') {
+    days = (7 * time);
+    factor = Math.trunc((((7 * time) / 3)));
+  } else if (((data.periodType) === 'months')) {
+    days = (30 * time);
+    factor = (((30 * time) / 3));
+  }
+  impact.currentlyInfected = ((data.reportedCases) * 10);
+  severeImpact.currentlyInfected = ((data.reportedCases) * 50);
+  impact.infectionsByRequestedTime = (impact.currentlyInfected * (2 ** factor));
+  severeImpact.infectionsByRequestedTime = (severeImpact.currentlyInfected * (2 ** factor));
+  impact.severeCasesByRequestedTime = Math.trunc(
+    (15 / 100) * impact.infectionsByRequestedTime
+  );
+  severeImpact.severeCasesByRequestedTime = Math.trunc(
+    (15 / 100) * severeImpact.infectionsByRequestedTime
+  );
+  impact.hospitalBedsByRequestedTime = Math.trunc(
+    availableBeds - (impact.severeCasesByRequestedTime)
+  );
+  severeImpact.hospitalBedsByRequestedTime = Math.trunc(
+    availableBeds - (severeImpact.severeCasesByRequestedTime)
+  );
+  impact.casesForICUByRequestedTime = Math.trunc(
+    (5 / 100) * (impact.infectionsByRequestedTime)
+  );
+  severeImpact.casesForICUByRequestedTime = Math.trunc(
+    (5 / 100) * (severeImpact.infectionsByRequestedTime)
+  );
+  impact.casesForVentilatorsByRequestedTime = Math.trunc(
+    (2 / 100) * (impact.infectionsByRequestedTime)
+  );
+  severeImpact.casesForVentilatorsByRequestedTime = Math.trunc(
+    (2 / 100) * (severeImpact.infectionsByRequestedTime)
+  );
+  impact.dollarsInFlight = Math.trunc(
+    (
+      (impact.infectionsByRequestedTime) * (data.region.avgDailyIncomePopulation)
+      * (data.region.avgDailyIncomeInUSD)
+    ) / (days)
+  );
+  severeImpact.dollarsInFlight = Math.trunc(
+    (
+      (severeImpact.infectionsByRequestedTime) * (data.region.avgDailyIncomePopulation)
+      * (data.region.avgDailyIncomeInUSD)
+    ) / (days)
+  );
+  console.log({
+    data,
+    impact,
+    severeImpact
+  });
+};
