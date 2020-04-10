@@ -1,6 +1,6 @@
 
 function fetchData() {
-  var myData = {};
+  var myData = { };
   myData.population = document.querySelector('#population').value;
   myData.timeToElapse = document.querySelector('#time').value;
   myData.reportedCases = document.querySelector('#reported-cases').value;
